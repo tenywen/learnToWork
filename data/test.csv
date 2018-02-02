@@ -1,0 +1,5 @@
+INT_ID,INT_x,INT_y,INT_z,STR_x,STR_y,STR_z,FLOAT_x,FLOAT_y
+1,1,2,3,abc,efg,hij,0.1,0.2
+2,1,2,3,abc,efg,hij,0.1,0.2
+3,1,2,3,abc,efg,hij,0.1,0.2
+4,1,2,3,abc,efg,hij,0.1,0.2

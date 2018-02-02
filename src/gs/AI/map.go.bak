@@ -1,0 +1,88 @@
+package AI
+
+import (
+	"io/ioutil"
+	"os"
+	"time"
+)
+
+import (
+	"cfg"
+	"db/map_tbl"
+	. "logger"
+	"timer"
+	"types/gsmap"
+)
+
+var mapManager gsmap.Manager
+
+const (
+	DB        = "test1"
+	mapWidth  = 512
+	mapHeight = 512
+)
+
+//---------------------------------------------------------- 初始化地图
+func InitGsMap() {
+	// load tiles
+	origTiles := readMapFile()
+	dbTiles := map_tbl.GetAllTiles(DB)
+
+	now := time.Now().Unix()
+	for k := range dbTiles {
+		tile := dbTiles[k]
+		origTiles[tile.Pos] = tile
+		if tile.End > 0 {
+			tile.TimeEvent = timer.NewTimer(tile.End)
+		}
+	}
+
+	mapManager.Tiles = origTiles
+
+	// load marches
+	mapManager.Marches = make(map[int32]*gsmap.March)
+	dbMarches := map_tbl.GetAllMarches(DB)
+	for k := range dbMarches {
+		march := dbMarches[k]
+		mapManager.Marches[march.Id] = march
+		// TODO add timer
+		if march.End > 0 {
+			march.TimeEven = time.NewTimer(march.End)
+		}
+	}
+}
+
+//---------------------------------------------------------- 读取原始地图文件
+func readMapFile() map[gsmap.MapPos]*gsmap.Tile {
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		ERROR("gopath nil")
+		os.Exit(-1)
+	}
+
+	raw, err := ioutil.ReadFile(gopath + "/" + cfg.Config.GS.MapName)
+	if err != nil {
+		ERROR("read mapFile", mapName, err)
+		os.Exit(-1)
+	}
+
+	i := 0
+	tiles := make(map[gsmap.MapPos]*Tile)
+	for x := 0; x < mapWidth; x++ {
+		for y := 0; y < mapHeight; y++ {
+			if x%2 == y%2 {
+				baseType := int8(raw[i])
+				if baseType == gmap.TILE_NULL {
+					baseType = gsmap.TILE_EMPTY
+				}
+				tile := &gsmap.Tile{BaseType: baseType, TileType: baseType, Pos: gsmap.MapPos{int16(x), int16(y)}, Level: int8(raw[i+1])}
+				tiles[tile.Pos] = tile
+				i += 2
+			} else {
+				tile := &gsmap.Tile{BaseType: gsmap.TILE_EMPTY, TileType: gsmap.TILE_EMPTY, Pos: gsmap.MapPos{int16(x), int16(y)}}
+				tiles[tile.Pos] = tile
+			}
+		}
+	}
+	return tiles
+}

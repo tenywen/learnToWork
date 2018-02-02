@@ -1,0 +1,11 @@
+package AI
+
+import (
+	"fmt"
+	"testing"
+)
+
+func TestReadMapFile(t *testing.T) {
+	tiles := readMapFile()
+	fmt.Println(len(tiles))
+}

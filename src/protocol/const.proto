@@ -1,0 +1,22 @@
+// 常量约定
+syntax = "proto3";
+
+package protocol;
+
+// 协议号
+enum PROTO {
+ 	TEST_GATE = 0;
+	HEART = 1;
+	LOGIN = 2;
+	LOGOUT = 3;
+	COMMON = 4;
+}
+
+// 错误码
+enum ERR{
+	OK = 0;
+	USER_NOT_LOGIN = 1;
+    SERVER_NOT_EXIST = 2; 
+	DATA = 3;
+	USER_LOGOUT = 4;
+}

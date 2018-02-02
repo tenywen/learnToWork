@@ -1,0 +1,44 @@
+// 客户端和gate的通信协议
+syntax="proto3";
+
+import "const.proto";
+
+package protocol;
+
+message NULL {}
+
+// 登录
+message LOGIN_REQ {
+	int32  serverid = 1; 
+	string uuid = 2; 
+	string account = 3;
+	string pwd = 4;
+}
+
+message LOGIN_ACK {
+	int64 uid   = 1;
+	string name = 2;
+	int32 level = 3;
+}
+
+// 退出
+message LOGOUT_REQ {
+	NULL null = 1;
+}
+
+// 通用回复
+message COMMON_ACK{
+	PROTO api = 1;
+	ERR   err = 2;
+}
+
+
+// 心跳包
+message HEART_REQ {
+	NULL null = 1;
+}
+
+// gate 通信测试协议
+message TEST_GATE_REQ {
+	int64 start = 1;
+}

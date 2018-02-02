@@ -1,0 +1,68 @@
+gs:
+    -
+        id: 1
+        logname: gs.log
+        mapname: gd_config/map001
+        port: :8083
+        ip: 127.0.0.1
+        db: 127.0.0.1:27017
+        
+#   example for more than 2 gs
+#   -    
+#       id: 2 
+#       logname: gs.log,
+#       mapname: gd_config/map001,
+#       port: 8081
+#       ip: 127.0.0.2
+#       db: 127.0.0.1:27017
+    
+gate:
+    -
+        id: 1
+        ip: 127.0.0.1
+        port: :8082
+        logname: gate.log
+        worknum: 5
+        buffermax: 100000
+        db: 127.0.0.1:27017
+
+
+#   example for more than 2 gate
+#   - 
+#       id: 2
+#       ip: 127.0.0.2
+#       port: 8080
+#       logname: gate.log
+#       worknum: 5
+#       buffermax: 100000
+#       db: 127.0.0.1:27017
+
+# https://github.com/natefinch/lumberjack
+log:
+    #If MaxBackups and MaxAge are both 0, no old log files will be deleted.
+    # maxsize is the maximum size in megabytes of the log file before it gets rotated.default: 100 megabytes
+    maxsize: 500
+
+    # maxage is the maximum number of days to retain old log file. the default is not to remove old log files 
+    maxage: 30 
+
+    # maxbackups is the maximum number of old log files to retain. the default is to retain all old files
+    maxbackups: 0
+
+    # localtime determines if the time used for formatting the timestamps in backup files is the computer's local time. default: UTC 
+    localtime: true 
+
+    # compress determines if the rotated log files should be compressed using gzip. The default is not to perform compression.
+    compress: true 
+
+    # level is the log level to write.-1(debug); 0(info) ;1(warn); 2(error);3(panic). The default is 0(info)
+    level: -1
+
+    # log path
+    path: log/
+
+# kafka
+kafka:
+    # kafka addr
+    addrs: 
+        - 127.0.0.1:
