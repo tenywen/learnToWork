@@ -7,7 +7,9 @@ gate和gs使用grpc-go链接。gate和gs均可以水平扩展，同时运行多�
 
 # start
 1.install [govendor](https://github.com/kardianos/govendor)
+
 go get -u github.com/kardianos/govendor
+
 install dependencies
 
 2.install [mongodb](https://www.mongodb.com/download-center?jmp=nav#atlas)
