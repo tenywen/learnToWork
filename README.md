@@ -1,4 +1,4 @@
-#learnToWork
+# learnToWork
 试图让它运行起来的一个golang服务器框架.<br>
 主要包括gate和gs两部分.其中gate可以作为网关,gs可以作为逻辑服务使用.gate和gs之间使用[grpc](https://github.com/grpc/grpc-go)通信.<br>
 gate和gs均可以水平扩展,同时运行多个.
