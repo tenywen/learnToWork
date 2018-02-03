@@ -5,10 +5,7 @@ gate和gs均可以水平扩展,同时运行多个.
 
 ##### 初始版本,文件结构可能会变化.
 
-### 快速启动.
-#### 1
-安装[mongodb](https://www.mongodb.com/download-center?jmp=nav#atlas)并启动.
-#### 2
-设置config.yaml中gate和gs的db为启动的mongodb ip和端口.
-#### 3
-sh startup.sh
+#### 快速启动.
+##### 1.安装[mongodb](https://www.mongodb.com/download-center?jmp=nav#atlas)并启动.
+##### 2.设置config.yaml中gate和gs的db为启动的mongodb ip和端口.
+##### 3.sh startup.sh
