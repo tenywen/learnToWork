@@ -1,18 +1,11 @@
-# learnToWork
-试图让它运行起来的一个golang 服务器框架。主要包括gate和gs两部分。
-gate可以作为网关。
-gs可以作为逻辑服务使用。
-gate和gs使用grpc-go链接。gate和gs均可以水平扩展，同时运行多个。
-初始版本，文件结构可能变化较大。
+#learnToWork
+试图让它运行起来的一个golang服务器框架.<br>
+主要包括gate和gs两部分.其中gate可以作为网关,gs可以作为逻辑服务使用.gate和gs之间使用`[grpc](https://github.com/grpc/grpc-go)`通信.<br>
+gate和gs均可以水平扩展,同时运行多个.
 
-# start
-1.install [govendor](https://github.com/kardianos/govendor)
+##### 初始版本,文件结构可能会变化.
 
-go get -u github.com/kardianos/govendor
-
-install dependencies
-
-2.install [mongodb](https://www.mongodb.com/download-center?jmp=nav#atlas)
-start mongodb
-
-3.sh startup.sh
+### 快速启动.
+#### 1.安装`[mongodb](https://www.mongodb.com/download-center?jmp=nav#atlas)`并启动.
+#### 2.设置config.yaml中gate和gs的db为启动的mongodb ip和端口.
+#### 3.sh startup.sh

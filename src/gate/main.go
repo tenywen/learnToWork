@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"net/http"
 	_ "net/http/pprof"
 )
@@ -30,6 +31,7 @@ func main() {
 		db.StartDB(gateConfig.DB)
 		gsDial()
 		server("tcp4", gateConfig.Port, gateConfig.WorkNum, gateConfig.BufferMax)
+		return
 	}
-	INFO("GATE STOP!")
+	fmt.Println("GATE NOT START!")
 }

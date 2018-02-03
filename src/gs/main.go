@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"google.golang.org/grpc"
 	"net"
 	"os"
@@ -38,6 +39,7 @@ func main() {
 		server := grpc.NewServer(opts...)
 		pb.RegisterServiceServer(server, service{})
 		server.Serve(listen)
+		return
 	}
-	INFO("GS STOP!")
+	fmt.Println("GS NOT START!")
 }
