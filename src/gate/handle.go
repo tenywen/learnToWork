@@ -9,32 +9,19 @@ import (
 	pb "protocol"
 )
 
-func handle(sess *session, data []byte) {
-	if len(data) < 2 {
-		return
-	}
-
-	var result []byte
+func handle(sess *session, data []byte) []byte {
 	api := pb.PROTO(binary.LittleEndian.Uint16(data[:2]))
 
 	switch api {
 	case pb.PROTO_LOGIN:
-		result = login_req(sess, data[2:])
+		return login_req(sess, data[2:])
 	case pb.PROTO_LOGOUT:
-		result = logout_req(sess, nil)
+		return logout_req(sess, nil)
 	case pb.PROTO_TEST_GATE:
-		result = test_gate(sess, data[2:])
-	default:
-		result = forward(sess, api, data[2:])
+		return test_gate(sess, data[2:])
 	}
 
-	if result != nil {
-		dispatch(opWrite, sess.fd, result)
-	}
-
-	if sess.flag&SESSION_KICKOUT != 0 {
-		dispatch(opClose, sess.fd, nil)
-	}
+	return forward(sess, api, data[2:])
 }
 
 func selectServer(uuid string) int16 {

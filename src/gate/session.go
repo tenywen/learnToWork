@@ -22,8 +22,8 @@ type session struct {
 
 func newsession(fd int) *session {
 	return &session{
-		fd:           fd,
-		sendList:     list.New(),
+		fd: fd,
+		//sendList:     list.New(),
 		readerBuffer: make([]byte, dataMax),
 		readerEnd:    headerSize,
 	}

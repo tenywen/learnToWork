@@ -5,13 +5,12 @@ import (
 )
 
 import (
-	"gs/closure"
+	. "closure"
 	"gs/gsdb"
 	. "gs/types"
 	"gs/types/build"
 	"gs/types/item"
 	"gs/types/research"
-	"gs/writer"
 	. "logger"
 	pb "protocol"
 	"timer"
@@ -21,12 +20,23 @@ const (
 	timeout = 600 // s
 )
 
-func startAgent() {
+func startAgent(stream pb.Service_StreamServer, in chan *pb.MSG) {
 	closure.TimerClosure(time.Now().Unix()+60, nil, nil, closure.TIMER_minHandle)
+	mq := make(chan Closure, 1000)
 	for {
 		select {
 		case msg := <-in: // from gate
-			handle(msg)
+			result := handle(gsdb.Get(msg.Uid), msg.Api, msg.Data)
+			if result != nil {
+				stream.Send(result)
+			}
+		case f := <-mq:
+			result := f()
+			if result != nil {
+
+			}
+		case msg := <-out:
+			stream.Send(msg)
 		case f := <-closure.Ch: // from internal
 			f()
 		case f := <-timer.Ch: // from timer
@@ -35,44 +45,18 @@ func startAgent() {
 	}
 }
 
-func handle(msg *pb.MSG) {
-	now := time.Now().Unix()
-	var sess *Session
-
-	switch msg.Api {
-	case pb.PROTO_LOGIN:
-		sess = &Session{
-			Fd:         msg.Fd,
-			Idx:        msg.Idx,
-			Id:         msg.Uid,
-			Builds:     &build.Manager{},
-			Items:      &item.Manager{},
-			Researches: &research.Manager{},
-		}
-	default:
-		sess = gsdb.Get(msg.Uid)
+func handle(sess *Session, api pb.PROTO, data []byte) []byte {
+	if api != pb.PROTO_LOGIN && sess == nil {
+		return nil
 	}
-
-	handler := gsHandlers[msg.Api]
+	handler := handlers[api]
 	if handler == nil {
-		ERROR("api:", msg.Api, "not exist")
+		ERROR("api:", api, "not exist")
 		return
 	}
 
-	result, err := handler(sess, msg.Data)
+	result, err := handler(sess, data)
 	if result != nil {
-		writer := writer.Get(sess.Idx)
-		if writer != nil {
-			select {
-			case writer <- &pb.MSG{
-				Fd:   sess.Fd,
-				Data: result,
-				Err:  err,
-			}:
-			default:
-			}
-		}
+
 	}
-	sess.UpdateTime = now
-	return
 }

@@ -36,6 +36,7 @@ func gsDial() {
 			os.Exit(-1)
 		}
 
+		setStream(stream, config.Id)
 		go func() {
 			defer closeStream(config.Id)
 			for {
@@ -52,7 +53,6 @@ func gsDial() {
 				}
 			}
 		}()
-		setStream(stream, config.Id)
 		DEBUGF("dial gs %v succ!", config.Id)
 	}
 }

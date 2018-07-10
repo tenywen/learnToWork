@@ -23,11 +23,9 @@ func init() {
 
 func main() {
 	flag.Parse()
-
 	gsConfig := cfg.GetGsConfig(id)
 	if gsConfig != nil {
 		StartLogger(gsConfig.LogName)
-		go startAgent()
 		db.StartDB(gsConfig.DB)
 		listen, err := net.Listen("tcp", gsConfig.Port)
 		if err != nil {

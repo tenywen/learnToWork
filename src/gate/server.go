@@ -5,6 +5,7 @@ import (
 )
 
 import (
+	. "closure"
 	. "logger"
 )
 
@@ -43,7 +44,7 @@ func server(network string, addr string, workNum int, bufferMax int) {
 		for i := 0; i <= n; i++ {
 			if events[i].Fd == int32(lis) {
 				accept()
-			} else if events[i].Events&syscall.EPOLLIN != 0 {
+			} else if events[i].Events&syscall.EPOLLIN != 0 { // read
 				dispatch(opHandle, int(events[i].Fd), nil)
 			} else if events[i].Events&syscall.EPOLLOUT != 0 {
 				dispatch(opWrite, int(events[i].Fd), nil)
@@ -74,14 +75,27 @@ func accept() {
 }
 
 func dispatch(op int8, fd int, data []byte) {
-	t := &task{op, fd, data}
-	w := getWorker(fd)
+	w := workerPool[fd%len(workerPool)]
+	var c Closure
+	switch op {
+	case opHandle:
+		c = func() []byte {
+			return w.handleConn(fd)
+		}
+	case opClose:
+		c = func() []byte {
+			return w.close(fd)
+		}
+	case opWrite:
+		c = func() []byte {
+			return w.write(fd, data)
+		}
+	default:
+		return
+	}
+
 	select {
-	case w.taskPool <- t:
+	case w.ch <- c:
 	default:
 	}
-}
-
-func getWorker(fd int) *worker {
-	return workerPool[fd%len(workerPool)]
 }

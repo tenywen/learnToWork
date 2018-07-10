@@ -24,4 +24,5 @@ type Session struct {
 	Builds     *build.Manager
 	Researches *research.Manager
 	Items      *item.Manager
+	MQ         chan []byte
 }
