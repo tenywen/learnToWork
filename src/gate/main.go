@@ -9,7 +9,6 @@ import (
 
 import (
 	"cfg"
-	"db"
 	. "logger"
 )
 
@@ -25,13 +24,6 @@ func main() {
 		http.ListenAndServe("localhost:6060", nil)
 	}()
 
-	gateConfig := cfg.GetGateConfig(id)
-	if gateConfig != nil {
-		StartLogger(gateConfig.LogName)
-		db.StartDB(gateConfig.DB)
-		gsDial()
-		server("tcp4", gateConfig.Port, gateConfig.WorkNum, gateConfig.BufferMax)
-		return
-	}
-	fmt.Println("GATE NOT START!")
+	StartLogger(gateConfig.LogName)
+	server("tcp4", gateConfig.Port)
 }

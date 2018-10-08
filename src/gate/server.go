@@ -18,7 +18,7 @@ func epollEvent(fd, op int, ev uint32) {
 	syscall.EpollCtl(epfd, op, fd, &syscall.EpollEvent{Events: ev, Fd: int32(fd)})
 }
 
-func server(network string, addr string, workNum int, bufferMax int) {
+func server(network string, addr string) {
 	startWorker(workNum, bufferMax)
 	// listen event
 	sockAddr, domain := resolveTCPAddr(network, addr)
