@@ -97,8 +97,8 @@ func (w *worker) handleConn(fd int) []byte {
 }
 
 func (w *worker) close(fd int) []byte {
-	syscall.Close(fd)
 	epollEvent(fd, syscall.EPOLL_CTL_DEL, evRead)
+	syscall.Close(fd)
 	if sess, ok := w.sessions[fd]; ok {
 		DEBUGF("fd %v stat cnt:%v avg:%v", sess.fd, sess.cnt, sess.delay/sess.cnt)
 

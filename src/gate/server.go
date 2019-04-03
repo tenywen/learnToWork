@@ -10,25 +10,25 @@ import (
 )
 
 var (
-	lis  int
-	epfd int
+	listen int
+	epfd   int
 )
 
 func epollEvent(fd, op int, ev uint32) {
 	syscall.EpollCtl(epfd, op, fd, &syscall.EpollEvent{Events: ev, Fd: int32(fd)})
 }
 
-func server(network string, addr string, workNum int, bufferMax int) {
+func server(network string, addr string) {
 	startWorker(workNum, bufferMax)
 	// listen event
-	sockAddr, domain := resolveTCPAddr(network, addr)
-	lis, _ = syscall.Socket(domain, syscall.SOCK_STREAM|syscall.SOCK_NONBLOCK, syscall.IPPROTO_TCP)
+	socketAddr, domain := resolveTCPAddr(network, addr)
+	listen, _ = syscall.Socket(domain, syscall.SOCK_STREAM|syscall.SOCK_NONBLOCK, syscall.IPPROTO_TCP)
 	defer syscall.Close(lis)
-	syscall.Bind(lis, sockAddr)
+	syscall.Bind(lis, socketAddr)
 	syscall.SetNonblock(lis, true)
-	syscall.Listen(lis, syscall.SOMAXCONN)
+	syscall.Listen(listen, syscall.SOMAXCONN)
 	epfd, _ = syscall.EpollCreate1(syscall.EPOLL_CLOEXEC)
-	epollEvent(lis, syscall.EPOLL_CTL_ADD, evListen)
+	epollEvent(listen, syscall.EPOLL_CTL_ADD, evListen)
 	DEBUG("GATE START!")
 	// epoll event loop
 	var events [evMax]syscall.EpollEvent
@@ -42,8 +42,8 @@ func server(network string, addr string, workNum int, bufferMax int) {
 		}
 
 		for i := 0; i <= n; i++ {
-			if events[i].Fd == int32(lis) {
-				accept()
+			if events[i].Fd == int32(listen) {
+				accept(listen, epfd)
 			} else if events[i].Events&syscall.EPOLLIN != 0 { // read
 				dispatch(opHandle, int(events[i].Fd), nil)
 			} else if events[i].Events&syscall.EPOLLOUT != 0 {
@@ -57,7 +57,7 @@ func server(network string, addr string, workNum int, bufferMax int) {
 
 func accept() {
 	for {
-		fd, _, err := syscall.Accept(lis)
+		fd, _, err := syscall.Accept(listen)
 		if err != nil {
 			if err == syscall.EAGAIN || err == syscall.EWOULDBLOCK { // eof
 				break
